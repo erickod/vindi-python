@@ -1,6 +1,5 @@
-from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 from uuid import uuid1
 from vindi.http_client.protocols import HttpClient
 from vindi.config import Config
@@ -9,30 +8,38 @@ from vindi.config import Config
 
 
 @dataclass
+class Address:
+    street: str
+    neighborhood: str
+    city: str
+    zipcode: str
+    complement: str
+    number: str
+    country: str
+
+    def asdict(self) -> dict[str, str]:
+        return {
+            "street": self.street,
+            "neighborhood": self.neighborhood,
+            "city": self.city,
+            "zipcode": self.zipcode,
+            "complement": self.complement,
+            "number": self.number,
+            "country": self.country,
+        }
+
+
+@dataclass
 class Customer:
     name: str
     email: str
     documentation: str
+    address: Address
     code: Any = uuid1()
 
     def __post_init__(self) -> None:
-        self.__address: dict[str, str] = {}
         self.__phones: list[dict[str, str]] = []
-
-    def add_address(
-        self,
-        street: str,
-        neighborhood: str,
-        city: str,
-        state: str,
-        zipcode: str,
-        additional_details: str = "",
-        number: str = "",
-        country: str = "BR",
-    ) -> None:
-        # TODO: add validation to add_address
-        self.__address = deepcopy(locals())
-        self.__address.pop("self")
+        self.__status: Literal["active", "inactive"]
 
     def add_phone(self, type: str, number: str, extension: str = "-") -> None:
         # TODO: add validation to add_phone
@@ -40,6 +47,9 @@ class Customer:
         if phone in self.__phones:
             return
         self.__phones.append(phone)
+
+    def set_status(self, status: Literal["active", "inactive"]) -> None:
+        self.__status = status
 
     def asdict(self) -> dict[str, str | list[dict[str, str]] | dict[str, str]]:
         return {
@@ -49,7 +59,7 @@ class Customer:
             "code": str(self.code),
             "notes": "-",
             "metadata": {},
-            "address": self.__address,
+            "address": self.address.asdict(),
             "phones": self.__phones,
         }
 
@@ -74,3 +84,43 @@ class CustomerHandler:
             url=self._config.get_environ_url() + self._base_endpoint,
             json=customer.asdict(),
         )
+
+    async def list_customers(
+        self,
+        page: int = 1,
+        items_per_page: int = 25,
+        sort_by: str = "created_at",
+        order: Literal["asc", "desc"] = "asc",
+        query: str = "",
+    ) -> Any:
+        # TODO: must return a list of Customer
+        url = (
+            f"{self._config.get_environ_url()}"
+            f"{self._base_endpoint}"
+            f"?page={page}&per_page={items_per_page}&sort={sort_by}"
+            f"sort_order={order}&query={query}"
+        )
+
+        if self._config.environment == "sandbox":
+            customers: list[Customer] = []
+            output = await self._http_client.get(
+                url=url,
+                headers={"authorization": self._config.get_api_key()},
+            )
+            raw_customers = output.json.get("customers", [])
+            for c in raw_customers:
+                customer = Customer(
+                    name=c.get("name"),
+                    email=c.get("email"),
+                    documentation=c.get("registry_code"),
+                    code=c.get("code"),
+                )
+                print(customer)
+            return output
+        self._http_client.authenticate(
+            type="basic", username=self._config.get_api_key(), password=""
+        )
+        output = await self._http_client.get(
+            url=url,
+        )
+        return output
