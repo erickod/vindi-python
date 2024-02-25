@@ -1,7 +1,8 @@
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 from .http_response import HttpResponse
 
 
+@runtime_checkable
 class HttpClient(Protocol):
     def authenticate(self, type: str, **kwargs) -> None:
         pass
