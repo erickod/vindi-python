@@ -3,8 +3,6 @@ from typing import Any, Literal
 from uuid import uuid1
 from vindi.handlers.base_handler import BaseVindiHandler
 
-# TODO: raise when it receive errors
-
 
 @dataclass
 class Address:
@@ -69,6 +67,7 @@ class CustomerHandler(BaseVindiHandler):
         return "/v1/customers"
 
     async def create_customer(self, customer: Customer) -> None:
+        # TODO: raise when it receive errors
         await self.request(
             method="post",
             url=self._config.get_environ_url() + self.base_endpoint,
@@ -83,6 +82,7 @@ class CustomerHandler(BaseVindiHandler):
         order: Literal["asc", "desc"] = "asc",
         query: str = "",
     ) -> Any:
+        # TODO: raise when it receive errors
         url = (
             f"{self._config.get_environ_url()}"
             f"{self.base_endpoint}?page={page}"
@@ -111,6 +111,3 @@ class CustomerHandler(BaseVindiHandler):
             )
             customers.append(customer)
         return customers
-
-
-# 2024149923731 | 2024149934531
