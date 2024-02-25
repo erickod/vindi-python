@@ -13,6 +13,18 @@ httpx = "^0.27.0"
 python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
 asyncio_mode = "auto"
 
+[tool.coverage.report]
+exclude_also = [
+    "class HttpClient(Protocol):"
+    ]
+
+[tool.coverage.run]
+omit = [
+    "*/protocols/*",
+    "*/__init__.py",
+    "*/tests/*",
+    ]
+
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.1"
 pytest-asyncio = "^0.23.5"
