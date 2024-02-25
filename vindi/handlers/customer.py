@@ -42,7 +42,7 @@ class Customer:
 
     def add_phone(self, type: str, number: str, extension: str = "-") -> None:
         # TODO: add validation to add_phone
-        phone = {"phone_type": "mobile", "number": "string", "extension": "string"}
+        phone = {"phone_type": type, "number": number, "extension": extension}
         if phone in self.__phones:
             return
         self.__phones.append(phone)
