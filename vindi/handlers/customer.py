@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Literal
 from uuid import uuid1
+from vindi.errors import ApiError
 from vindi.handlers.base_handler import BaseVindiHandler
 
 
@@ -67,12 +68,13 @@ class CustomerHandler(BaseVindiHandler):
         return "/v1/customers"
 
     async def create_customer(self, customer: Customer) -> None:
-        # TODO: raise when it receive errors
-        await self.request(
+        output = await self.request(
             method="post",
             url=self._config.get_environ_url() + self.base_endpoint,
             json=customer.asdict(),
         )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknow error"))
 
     async def list_customers(
         self,

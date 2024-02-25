@@ -2,7 +2,6 @@ from abc import ABC, abstractproperty
 from typing import Callable, Literal
 from vindi.config import Config
 from vindi.http_client.http_response import HttpResponse
-
 from vindi.http_client.protocols import HttpClient
 
 
