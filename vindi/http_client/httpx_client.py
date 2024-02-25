@@ -17,13 +17,15 @@ class HttpxClient:
             )
         return None
 
-    async def get(self, url: str, headers: dict[str, str] = {}) -> HttpResponse:
+    async def get(
+        self, url: str, headers: dict[str, str] = {}, **kwargs
+    ) -> HttpResponse:
         async with httpx.AsyncClient() as client:
             response = await client.get(url=url, headers=headers, auth=self.__auth)
             return HttpResponse(headers=response.headers, json=response.json())
 
     async def post(
-        self, url: str, json, files=None, headers: dict[str, str] = {}
+        self, url: str, json, files=None, headers: dict[str, str] = {}, **kwargs
     ) -> HttpResponse:
         async with httpx.AsyncClient() as client:
             if files:
@@ -36,19 +38,25 @@ class HttpxClient:
             )
             return HttpResponse(headers=response.headers, json=response.json())
 
-    async def put(self, url: str, json, headers: dict[str, str] = {}) -> HttpResponse:
+    async def put(
+        self, url: str, json, headers: dict[str, str] = {}, **kwargs
+    ) -> HttpResponse:
         async with httpx.AsyncClient() as client:
             response = await client.put(
                 url=url, json=json, headers=headers, auth=self.__auth
             )
             return HttpResponse(headers=response.headers, json=response.json())
 
-    async def delete(self, url: str, headers: dict[str, str] = {}) -> HttpResponse:
+    async def delete(
+        self, url: str, headers: dict[str, str] = {}, **kwargs
+    ) -> HttpResponse:
         async with httpx.AsyncClient() as client:
             response = await client.delete(url=url, headers=headers, auth=self.__auth)
             return HttpResponse(headers=response.headers, json=response.json())
 
-    async def patch(self, url: str, json, headers: dict[str, str] = {}) -> HttpResponse:
+    async def patch(
+        self, url: str, json, headers: dict[str, str] = {}, **kwargs
+    ) -> HttpResponse:
         async with httpx.AsyncClient() as client:
             response = await client.patch(
                 url=url, json=json, headers=headers, auth=self.__auth

@@ -23,24 +23,32 @@ class FakeHttpClient:
             status=self._output_status, headers={}, json=self._output_payload
         )
 
-    async def get(self, url: str, headers: dict[str, str] = {}) -> HttpResponse:
+    async def get(
+        self, url: str, headers: dict[str, str] = {}, **kwargs
+    ) -> HttpResponse:
         self.get_called = True
         return self._make_async(url)
 
     async def post(
-        self, url: str, json, files=None, headers: dict[str, str] = {}
+        self, url: str, json, files=None, headers: dict[str, str] = {}, **kwargs
     ) -> HttpResponse:
         self.post_called = True
         return self._make_async(data=json)
 
-    async def put(self, url: str, json, headers: dict[str, str] = {}) -> HttpResponse:
+    async def put(
+        self, url: str, json, headers: dict[str, str] = {}, **kwargs
+    ) -> HttpResponse:
         self.put_called = True
         return self._make_async(data=json)
 
-    async def delete(self, url: str, headers: dict[str, str] = {}) -> HttpResponse:
+    async def delete(
+        self, url: str, headers: dict[str, str] = {}, **kwargs
+    ) -> HttpResponse:
         self.delete_called = True
         return self._make_async(data={})
 
-    async def patch(self, url: str, json, headers: dict[str, str] = {}) -> HttpResponse:
+    async def patch(
+        self, url: str, json, headers: dict[str, str] = {}, **kwargs
+    ) -> HttpResponse:
         self.patch_called = True
         return self._make_async(data=json)
