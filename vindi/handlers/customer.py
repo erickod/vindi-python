@@ -68,17 +68,9 @@ class CustomerHandler(BaseVindiHandler):
     def base_endpoint(self) -> str:
         return "/v1/customers"
 
-    async def create_customer(self, customer: Customer) -> Any:
-        if self._config.environment == "sandbox":
-            return await self.request(
-                method="post",
-                url=self._config.get_environ_url() + self.base_endpoint,
-                json=customer.asdict(),
-            )
-        self._http_client.authenticate(
-            type="basic", username=self._config.get_api_key(), password=""
-        )
-        return await self._http_client.post(
+    async def create_customer(self, customer: Customer) -> None:
+        await self.request(
+            method="post",
             url=self._config.get_environ_url() + self.base_endpoint,
             json=customer.asdict(),
         )
@@ -97,29 +89,28 @@ class CustomerHandler(BaseVindiHandler):
             f"&per_page={items_per_page}&sort={sort_by}"
             f"sort_order={order}&query={query}"
         )
-        if self._config.environment == "sandbox":
-            customers: list[Customer] = []
-            output = await self.request(method="get", url=url)
-            raw_customers = output.json.get("customers", [])
-            for c in raw_customers:
-                address = c.get("address", {})
-                customer = Customer(
-                    name=c.get("name"),
-                    email=c.get("email"),
-                    documentation=c.get("registry_code"),
-                    code=c.get("code"),
-                    address=Address(
-                        street=address.get("street"),
-                        neighborhood=address.get("neighborhood"),
-                        city=address.get("city"),
-                        zipcode=address.get("zipcode"),
-                        complement=address.get("additional_details"),
-                        number=address.get("number"),
-                        country=address.get("country"),
-                    ),
-                )
-                customers.append(customer)
-            return customers
+        customers: list[Customer] = []
+        output = await self.request(method="get", url=url)
+        raw_customers = output.json.get("customers", [])
+        for c in raw_customers:
+            address = c.get("address", {})
+            customer = Customer(
+                name=c.get("name"),
+                email=c.get("email"),
+                documentation=c.get("registry_code"),
+                code=c.get("code"),
+                address=Address(
+                    street=address.get("street"),
+                    neighborhood=address.get("neighborhood"),
+                    city=address.get("city"),
+                    zipcode=address.get("zipcode"),
+                    complement=address.get("additional_details"),
+                    number=address.get("number"),
+                    country=address.get("country"),
+                ),
+            )
+            customers.append(customer)
+        return customers
 
 
 # 2024149923731 | 2024149934531
