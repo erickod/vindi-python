@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Literal
 from uuid import uuid1
-from vindi.http_client.protocols import HttpClient
-from vindi.config import Config
+from vindi.handlers.base_handler import BaseVindiHandler
 
 # TODO: raise when it receive errors
 
@@ -64,24 +63,23 @@ class Customer:
         }
 
 
-class CustomerHandler:
-    def __init__(self, http_client: HttpClient, config: Config) -> None:
-        self._http_client = http_client
-        self._config = config
-        self._base_endpoint: str = "/v1/customers"
+class CustomerHandler(BaseVindiHandler):
+    @property
+    def base_endpoint(self) -> str:
+        return "/v1/customers"
 
     async def create_customer(self, customer: Customer) -> Any:
         if self._config.environment == "sandbox":
-            return await self._http_client.post(
-                url=self._config.get_environ_url() + self._base_endpoint,
+            return await self.request(
+                method="post",
+                url=self._config.get_environ_url() + self.base_endpoint,
                 json=customer.asdict(),
-                headers={"authorization": self._config.get_api_key()},
             )
         self._http_client.authenticate(
             type="basic", username=self._config.get_api_key(), password=""
         )
         return await self._http_client.post(
-            url=self._config.get_environ_url() + self._base_endpoint,
+            url=self._config.get_environ_url() + self.base_endpoint,
             json=customer.asdict(),
         )
 
@@ -93,34 +91,35 @@ class CustomerHandler:
         order: Literal["asc", "desc"] = "asc",
         query: str = "",
     ) -> Any:
-        # TODO: must return a list of Customer
         url = (
             f"{self._config.get_environ_url()}"
-            f"{self._base_endpoint}"
-            f"?page={page}&per_page={items_per_page}&sort={sort_by}"
+            f"{self.base_endpoint}?page={page}"
+            f"&per_page={items_per_page}&sort={sort_by}"
             f"sort_order={order}&query={query}"
         )
-
         if self._config.environment == "sandbox":
             customers: list[Customer] = []
-            output = await self._http_client.get(
-                url=url,
-                headers={"authorization": self._config.get_api_key()},
-            )
+            output = await self.request(method="get", url=url)
             raw_customers = output.json.get("customers", [])
             for c in raw_customers:
+                address = c.get("address", {})
                 customer = Customer(
                     name=c.get("name"),
                     email=c.get("email"),
                     documentation=c.get("registry_code"),
                     code=c.get("code"),
+                    address=Address(
+                        street=address.get("street"),
+                        neighborhood=address.get("neighborhood"),
+                        city=address.get("city"),
+                        zipcode=address.get("zipcode"),
+                        complement=address.get("additional_details"),
+                        number=address.get("number"),
+                        country=address.get("country"),
+                    ),
                 )
-                print(customer)
-            return output
-        self._http_client.authenticate(
-            type="basic", username=self._config.get_api_key(), password=""
-        )
-        output = await self._http_client.get(
-            url=url,
-        )
-        return output
+                customers.append(customer)
+            return customers
+
+
+# 2024149923731 | 2024149934531
