@@ -93,6 +93,8 @@ class CustomerHandler(BaseVindiHandler):
         )
         customers: list[Customer] = []
         output = await self.request(method="get", url=url)
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknow error"))
         raw_customers = output.json.get("customers", [])
         for c in raw_customers:
             address = c.get("address", {})

@@ -34,3 +34,12 @@ async def test_ensure_create_customer_raises_when_api_return_errors() -> None:
     customer = Customer("John Doe", "mail@mail.com", "04071239468", address)
     with pytest.raises(ApiError):
         await sut.create_customer(customer)
+
+
+async def test_ensure_clist_customer_raises_when_api_return_errors() -> None:
+    http_client = FakeHttpClient(output_payload={"errors": [{"detail": "any error"}]})
+    sut = CustomerHandler(
+        http_client=http_client, config=Config(api_key="", environment="sandbox")
+    )
+    with pytest.raises(ApiError):
+        await sut.list_customers()
