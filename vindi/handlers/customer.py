@@ -91,11 +91,11 @@ class CustomerHandler(BaseVindiHandler):
             f"&per_page={items_per_page}&sort={sort_by}"
             f"sort_order={order}&query={query}"
         )
-        customers: list[Customer] = []
         output = await self.request(method="get", url=url)
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknow error"))
         raw_customers = output.json.get("customers", [])
+        customers: list[Customer] = []
         for c in raw_customers:
             address = c.get("address", {})
             customer = Customer(
