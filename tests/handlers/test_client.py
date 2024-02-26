@@ -9,6 +9,7 @@ async def test_instantiation_params() -> None:
     assert sut.environment == "sandbox"
 
 
+# TODO: Add every handler to this test
 @pytest.mark.parametrize("handler_detail", [("customer", CustomerHandler)])
 async def test_handler_access(handler_detail) -> None:
     sut = Vindi("APIKEY", "sandbox")
