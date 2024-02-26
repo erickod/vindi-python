@@ -20,8 +20,9 @@ exclude_also = [
 
 [tool.coverage.run]
 omit = [
-    "*/protocols/*",
+    "*protocols*",
     "*/__init__.py",
+    "*fake*",
     "*/tests/*",
     ]
 
