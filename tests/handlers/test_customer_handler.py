@@ -1,5 +1,5 @@
 import pytest
-from vindi.handlers.customer import CustomerHandler, Customer, Address
+from vindi.handlers.customer_handler import CustomerHandler, Customer, Address
 from vindi.config import Config
 from vindi.http_client.fake_http_client import FakeHttpClient
 from vindi.errors import ApiError

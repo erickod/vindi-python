@@ -1,4 +1,4 @@
-from vindi.handlers.customer import Address, Customer
+from vindi.handlers.customer_handler import Address, Customer
 
 
 address = Address(
@@ -25,3 +25,14 @@ async def test_customer_is_instantiated_with_right_params() -> None:
     assert sut.documentation == "04071239468"
     assert sut.code == "EXTERNAL_API_CODE"
     assert sut.address == address
+
+
+async def test_add_phone_to_the_customer() -> None:
+    sut = Customer(
+        "John Doe",
+        "mail@mail.com",
+        "04071239468",
+        code="EXTERNAL_API_CODE",
+        address=address,
+    )
+    sut.add_phone("mobile", number="61999999999")

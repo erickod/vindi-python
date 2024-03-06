@@ -1,6 +1,6 @@
 import pytest
 from vindi import Vindi
-from vindi.handlers.customer import CustomerHandler
+from vindi.handlers.customer_handler import CustomerHandler
 
 
 async def test_instantiation_params() -> None:

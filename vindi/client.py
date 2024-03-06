@@ -1,6 +1,6 @@
 from typing import Literal
 
-from vindi.handlers.customer import CustomerHandler
+from vindi.handlers.customer_handler import CustomerHandler
 from vindi.http_client.httpx_client import HttpxClient
 from vindi.http_client.protocols import HttpClient
 from .config import Config
