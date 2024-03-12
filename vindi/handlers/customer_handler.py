@@ -22,6 +22,8 @@ class CustomerHandler(BaseVindiHandler):
 
     async def update_customer(self, customer: Customer, id: int) -> Any:
         url = f"{self._config.get_environ_url()}{self.base_endpoint}{id}"
+        customer_asdict = customer.asdict()
+        del customer_asdict["email"]
         output = await self.request(
             method="put",
             url=url,
