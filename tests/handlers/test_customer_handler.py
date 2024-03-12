@@ -9,6 +9,7 @@ address = Address(
     street="Rua dos bobos",
     neighborhood="bairro ABC",
     city="city",
+    state="GO",
     zipcode="72120020",
     complement="",
     number="1",
