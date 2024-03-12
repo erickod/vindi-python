@@ -8,7 +8,7 @@ from vindi.handlers.base_handler import BaseVindiHandler
 class CustomerHandler(BaseVindiHandler):
     @property
     def base_endpoint(self) -> str:
-        return "/v1/customers"
+        return "/v1/customers/"
 
     async def create_customer(self, customer: Customer) -> Any:
         output = await self.request(
@@ -21,9 +21,10 @@ class CustomerHandler(BaseVindiHandler):
         return output
 
     async def update_customer(self, customer: Customer, id: int) -> Any:
+        url = f"{self._config.get_environ_url()}{self.base_endpoint}{id}"
         output = await self.request(
             method="put",
-            url=self._config.get_environ_url() + self.base_endpoint,
+            url=url,
             json=customer.asdict(),
         )
         if "errors" in output.json:
