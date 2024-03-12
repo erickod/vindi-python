@@ -27,7 +27,7 @@ class CustomerHandler(BaseVindiHandler):
         output = await self.request(
             method="put",
             url=url,
-            json=customer.asdict(),
+            json=customer_asdict,
         )
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknow error"))
