@@ -10,7 +10,7 @@ class CustomerHandler(BaseVindiHandler):
     def base_endpoint(self) -> str:
         return "/v1/customers"
 
-    async def create_customer(self, customer: Customer) -> None:
+    async def create_customer(self, customer: Customer) -> Any:
         output = await self.request(
             method="post",
             url=self._config.get_environ_url() + self.base_endpoint,
@@ -18,6 +18,7 @@ class CustomerHandler(BaseVindiHandler):
         )
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknow error"))
+        return output
 
     async def list_customers(
         self,
