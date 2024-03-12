@@ -20,6 +20,16 @@ class CustomerHandler(BaseVindiHandler):
             raise ApiError(output.json.get("errors", "unknow error"))
         return output
 
+    async def update_customer(self, customer: Customer, id: int) -> Any:
+        output = await self.request(
+            method="put",
+            url=self._config.get_environ_url() + self.base_endpoint,
+            json=customer.asdict(),
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknow error"))
+        return output
+
     async def list_customers(
         self,
         page: int = 1,
