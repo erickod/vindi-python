@@ -33,6 +33,14 @@ class CustomerHandler(BaseVindiHandler):
             raise ApiError(output.json.get("errors", "unknow error"))
         return output
 
+    async def delete_customer(self, id: int) -> Any:
+        url = f"{self._config.get_environ_url()}{self.base_endpoint}{id}"
+        output = await self.request(method="delete", url=url, json=None)
+        if "errors" in output.json:
+            output.json = {"id": id}
+            return output
+        return output
+
     async def list_customers(
         self,
         page: int = 1,
