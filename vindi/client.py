@@ -1,6 +1,7 @@
 from typing import Literal
 
 from vindi.handlers.customer_handler import CustomerHandler
+from vindi.handlers.product_handler import ProductHandler
 from vindi.http_client.httpx_client import HttpxClient
 from vindi.http_client.protocols import HttpClient
 from .config import Config
@@ -27,3 +28,7 @@ class Client:
     @property
     def customer(self) -> CustomerHandler:
         return CustomerHandler(http_client=self._http_client, config=self._config)
+
+    @property
+    def product(self) -> ProductHandler:
+        return ProductHandler(http_client=self._http_client, config=self._config)
