@@ -1,33 +1,46 @@
-from dataclasses import dataclass
-from typing import Any
+from dataclasses import asdict, dataclass, field
+from typing import Any, Literal
 from uuid import uuid1
 from vindi.errors import ApiError
 from vindi.handlers.base_handler import BaseVindiHandler
 
 
 @dataclass
+class PlanItem:
+    cycles: int
+    product_id: str
+
+
+@dataclass
 class Plan:
     name: str
-    description: str = "active"
-    status: str = "active"
+    description: str
+    installments: Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     code: str = str(uuid1())
+    status: str = "active"
+    interval: Literal["months", "days"] = "months"
+    invoice_split: bool = False
+    billing_cycles: int | None = None
+    plan_items: list[PlanItem] = field(default_factory=list)
 
     def asdict(self) -> dict[str, Any]:
-        return {
+        output = {
             "name": self.name,
-            "interval": "days",
-            "interval_count": 30,
+            "interval": self.interval,
+            "interval_count": 12,
             "billing_trigger_type": "beginning_of_period",
             "billing_trigger_day": 0,
-            "billing_cycles": 0,
+            "billing_cycles": self.billing_cycles,
             "code": self.code,
             "description": self.description,
-            "installments": 12,
-            "invoice_split": False,
+            "installments": self.installments,
+            "invoice_split": self.invoice_split,
             "status": self.status,
-            # "plan_items": [{"cycles": 0, "product_id": 0}],
             "metadata": {},
         }
+        if self.plan_items:
+            output["plan_items"] = [asdict(item) for item in self.plan_items]
+        return output
 
 
 class PlanHandler(BaseVindiHandler):
