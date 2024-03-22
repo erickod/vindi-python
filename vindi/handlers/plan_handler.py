@@ -22,12 +22,13 @@ class Plan:
     invoice_split: bool = False
     billing_cycles: int | None = None
     plan_items: list[PlanItem] = field(default_factory=list)
+    interval_count: int = 1
 
     def asdict(self) -> dict[str, Any]:
         output = {
             "name": self.name,
             "interval": self.interval,
-            "interval_count": 12,
+            "interval_count": self.interval_count,
             "billing_trigger_type": "beginning_of_period",
             "billing_trigger_day": 0,
             "billing_cycles": self.billing_cycles,
