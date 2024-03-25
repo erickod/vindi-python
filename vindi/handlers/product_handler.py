@@ -46,3 +46,14 @@ class ProductHandler(BaseVindiHandler):
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknow error"))
         return output
+
+    async def update_product(self, product: Product, id) -> Any:
+        product_as_dict = product.asdict()
+        output = await self.request(
+            method="put",
+            url=self._config.get_environ_url() + self.base_endpoint + id,
+            json=product_as_dict,
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknow error"))
+        return output
