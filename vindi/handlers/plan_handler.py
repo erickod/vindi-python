@@ -1,4 +1,5 @@
 from dataclasses import asdict, dataclass, field
+from email.policy import strict
 from typing import Any, Literal
 from uuid import uuid1
 from vindi.errors import ApiError
@@ -53,6 +54,16 @@ class PlanHandler(BaseVindiHandler):
         output = await self.request(
             method="post",
             url=self._config.get_environ_url() + self.base_endpoint,
+            json=plan.asdict(),
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknow error"))
+        return output
+
+    async def update_plan(self, plan: Plan, id: str) -> Any:
+        output = await self.request(
+            method="put",
+            url=self._config.get_environ_url() + self.base_endpoint + id,
             json=plan.asdict(),
         )
         if "errors" in output.json:
