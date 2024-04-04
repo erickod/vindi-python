@@ -3,6 +3,7 @@ from typing import Literal
 from vindi.handlers.customer_handler import CustomerHandler
 from vindi.handlers.plan_handler import PlanHandler
 from vindi.handlers.product_handler import ProductHandler
+from vindi.handlers.subscription import SubscriptionHandler
 from vindi.http_client.httpx_client import HttpxClient
 from vindi.http_client.protocols import HttpClient
 from .config import Config
@@ -37,3 +38,7 @@ class Client:
     @property
     def plan(self) -> PlanHandler:
         return PlanHandler(http_client=self._http_client, config=self._config)
+
+    @property
+    def subscription(self) -> SubscriptionHandler:
+        return SubscriptionHandler(http_client=self._http_client, config=self._config)
