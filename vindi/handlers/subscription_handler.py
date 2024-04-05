@@ -8,7 +8,7 @@ from vindi.handlers.base_handler import BaseVindiHandler
 
 class DiscountType(Enum):
     percentage = 'percentage'
-    amount = 'amount'
+    amount = 'flat'
     quantity = 'quantity'
 
     
@@ -16,12 +16,20 @@ class DiscountType(Enum):
 class Discount:
     discount_type: DiscountType
     percentage: float | None = None
-    amount: float | None = None
+    value: float | int | None = None
     quantity: int | None = None
     cycles: int | None = None
+    amount: float | None = None
 
     @property
     def asdict(self) -> dict:
+        if self.discount_type.value == 'flat':
+            self.amount = self.value
+        elif self.discount_type.value == 'percentage':
+            self.percentage = self.value
+        elif self.discount_type.value == 'quantity':
+            self.quantity == self.value
+            
         repr = {
             "discount_type": self.discount_type.value,
             "percentage": self.percentage,
