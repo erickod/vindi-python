@@ -115,6 +115,15 @@ class SubscriptionHandler(BaseVindiHandler):
             raise ApiError(output.json.get("errors", "unknown error"))
         return output
 
+    async def cancel_subscription(self, id: str):
+        output = await self.request(
+            method="delete",
+            url=self._config.get_environ_url() + self.base_endpoint + id,
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknown error"))
+        return output
+
     async def update_subscription(self, subscription: Subscription, id):
         output = await self.request(
             method="put",
