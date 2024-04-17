@@ -81,7 +81,7 @@ class CustomerHandler(BaseVindiHandler):
             customers.append(customer)
         return customers
 
-    async def create_payment_profile(self, gateway_token: str, customer_id: str) -> Any:
+    async def create_payment_profile(self, gateway_token: str, customer_id: str, payment_method_code: str) -> Any:
         base_endpoint = '/v1/payment_profiles'
         output = await self.request(
             method="post",
@@ -89,7 +89,7 @@ class CustomerHandler(BaseVindiHandler):
             json={
                 "gateway_token": gateway_token,
                 "customer_id": customer_id,
-                "payment_method_code": "credit_cart"
+                "payment_method_code": payment_method_code
             }
         )
         if "errors" in output.json:
