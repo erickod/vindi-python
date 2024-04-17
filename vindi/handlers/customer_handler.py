@@ -80,3 +80,19 @@ class CustomerHandler(BaseVindiHandler):
             )
             customers.append(customer)
         return customers
+
+    def create_payment_profile(self, gateway_token: str, customer_id: str) -> Any:
+        base_endpoint = '/v1/payment_profiles'
+        output = await self.request(
+            method="post",
+            url=self._config.get_environ_url() + base_endpoint,
+            json={
+                "gateway_token": gateway_token,
+                "customer_id": customer_id,
+                "payment_method_code": "credit_cart"
+            }
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknown error"))
+        return output
+
