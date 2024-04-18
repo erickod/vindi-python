@@ -7,31 +7,37 @@ from vindi.handlers.base_handler import BaseVindiHandler
 
 
 class DiscountType(Enum):
-    percentage = 'percentage'
-    amount = 'amount'
-    quantity = 'quantity'
+    percentage = "percentage"
+    amount = "amount"
+    quantity = "quantity"
 
-    
+
 @dataclass
 class Discount:
     discount_type: DiscountType
     percentage: float | None = None
-    amount: float | None = None
+    value: float | int | None = None
     quantity: int | None = None
     cycles: int | None = None
+    amount: float | None = None
 
     @property
     def asdict(self) -> dict:
+        if self.discount_type.value == "amount":
+            self.amount = self.value
+        elif self.discount_type.value == "percentage":
+            self.percentage = self.value
+        elif self.discount_type.value == "quantity":
+            self.quantity == self.value
+
         repr = {
             "discount_type": self.discount_type.value,
             "percentage": self.percentage,
             "amount": self.amount,
             "quantity": self.quantity,
-            "cycles": self.cycles
+            "cycles": self.cycles,
         }
-        return {
-            k: v for k, v in repr.items() if v is not None
-        }
+        return {k: v for k, v in repr.items() if v is not None}
 
 
 @dataclass
@@ -48,8 +54,14 @@ class ProductItem:
             "product_id": self.product_id,
             "cycles": self.cycles,
             "quantity": self.quantity,
-            "pricing_schema": {"price": self.price, "schema_type": "per_unit"} if self.price else None,
-            "discounts": [self.discount.asdict,] if self.discount else None
+            "pricing_schema": {"price": self.price, "schema_type": "per_unit"}
+            if self.price
+            else None,
+            "discounts": [
+                self.discount.asdict,
+            ]
+            if self.discount
+            else None,
         }
         return {k: v for k, v in repr.items() if v is not None}
 
@@ -62,7 +74,7 @@ class Subscription:
     payment_method_code: str
     product_items: list[ProductItem]
     installments: int = 1
-    start_at: str | None = None  
+    start_at: str | None = None
     payment_profile_id: str | None = None
     metadata: dict | None = None
     body: dict | None = None
@@ -86,9 +98,7 @@ class Subscription:
         print('####################'*4000)
         print('DENTRO DA LIB')
         print(repr)
-        return {
-            k: v for k, v in repr.items() if v is not None
-        }
+        return {k: v for k, v in repr.items() if v is not None}
 
 
 class SubscriptionHandler(BaseVindiHandler):
@@ -106,6 +116,15 @@ class SubscriptionHandler(BaseVindiHandler):
             raise ApiError(output.json.get("errors", "unknown error"))
         return output
 
+    async def cancel_subscription(self, id: str):
+        output = await self.request(
+            method="delete",
+            url=self._config.get_environ_url() + self.base_endpoint + id,
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknown error"))
+        return output
+
     async def update_subscription(self, subscription: Subscription, id):
         output = await self.request(
             method="put",
@@ -115,4 +134,3 @@ class SubscriptionHandler(BaseVindiHandler):
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknown error"))
         return output
-
