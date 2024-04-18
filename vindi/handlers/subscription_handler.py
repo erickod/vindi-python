@@ -88,15 +88,16 @@ class Subscription:
             "start_at": self.start_at,
             "payment_method_code": self.payment_method_code,
             "installments": self.installments,
-            "metadata": {k: v for k, v in self.metadata.items()}
-            if self.metadata
-            else None,
-            "body": {k: v for k, v in self.body} if self.body else None,
-            "payment_profile": {"id": self.payment_profile_id}
-            if self.payment_profile_id
-            else None,
-            "product_items": [p.asdict for p in self.product_items],
+            "metadata": {k : v for k,v in self.metadata.items()} if self.metadata else None,
+            "body": {k : v for k,v in self.body} if self.body else None,
+            "payment_profile": {"id": self.payment_profile_id} if self.payment_profile_id else None,
+            "product_items": [
+                p.asdict for p in self.product_items
+            ],
         }
+        print('####################'*4000)
+        print('DENTRO DA LIB')
+        print(repr)
         return {k: v for k, v in repr.items() if v is not None}
 
 
