@@ -83,6 +83,9 @@ class Subscription:
                 p.asdict for p in self.product_items
             ],
         }
+        print('####################'*4000)
+        print('DENTRO DA LIB')
+        print(repr)
         return {
             k: v for k, v in repr.items() if v is not None
         }
