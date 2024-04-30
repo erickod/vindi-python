@@ -21,7 +21,9 @@ class HttpxClient:
         self, url: str, headers: dict[str, str] = {}, **kwargs
     ) -> HttpResponse:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url=url, headers=headers, auth=self.__auth)
+            response = await client.get(
+                url=url, headers=headers, auth=self.__auth, timeout=400
+            )
             return HttpResponse(headers=response.headers, json=response.json())
 
     async def post(
@@ -30,11 +32,21 @@ class HttpxClient:
         async with httpx.AsyncClient() as client:
             if files:
                 response = await client.post(
-                    url=url, data=json, files=files, headers=headers, auth=self.__auth
+                    url=url,
+                    data=json,
+                    files=files,
+                    headers=headers,
+                    auth=self.__auth,
+                    timeout=400,
                 )
                 return HttpResponse(headers=response.headers, json=response.json())
             response = await client.post(
-                url=url, json=json, files=files, headers=headers, auth=self.__auth
+                url=url,
+                json=json,
+                files=files,
+                headers=headers,
+                auth=self.__auth,
+                timeout=400,
             )
             return HttpResponse(headers=response.headers, json=response.json())
 
@@ -43,7 +55,7 @@ class HttpxClient:
     ) -> HttpResponse:
         async with httpx.AsyncClient() as client:
             response = await client.put(
-                url=url, json=json, headers=headers, auth=self.__auth
+                url=url, json=json, headers=headers, auth=self.__auth, timeout=400
             )
             return HttpResponse(headers=response.headers, json=response.json())
 
@@ -51,7 +63,9 @@ class HttpxClient:
         self, url: str, headers: dict[str, str] = {}, **kwargs
     ) -> HttpResponse:
         async with httpx.AsyncClient() as client:
-            response = await client.delete(url=url, headers=headers, auth=self.__auth)
+            response = await client.delete(
+                url=url, headers=headers, auth=self.__auth, timeout=400
+            )
             return HttpResponse(headers=response.headers, json=response.json())
 
     async def patch(
@@ -59,6 +73,6 @@ class HttpxClient:
     ) -> HttpResponse:
         async with httpx.AsyncClient() as client:
             response = await client.patch(
-                url=url, json=json, headers=headers, auth=self.__auth
+                url=url, json=json, headers=headers, auth=self.__auth, timeout=400
             )
             return HttpResponse(headers=response.headers, json=response.json())
