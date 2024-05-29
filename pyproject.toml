@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "vindi"
+version = "0.0.0"
+description = ""
+authors = ["Erick Duarte <erickod@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+httpx = "^0.27.0"
+
+[tool.pytest.ini_options]
+python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
+asyncio_mode = "auto"
+
+[tool.coverage.report]
+exclude_also = [
+    "class HttpClient(Protocol):"
+    ]
+
+[tool.coverage.run]
+omit = [
+    "*protocols*",
+    "*/__init__.py",
+    "*fake*",
+    "*/tests/*",
+    ]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.1"
+pytest-asyncio = "^0.23.5"
+pytest-cov = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
