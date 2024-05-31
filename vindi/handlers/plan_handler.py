@@ -69,3 +69,12 @@ class PlanHandler(BaseVindiHandler):
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknow error"))
         return output
+
+    async def get_by_code(self, code: str) -> Any:
+        output = await self.request(
+            method="get",
+            url=self._config.get_environ_url() + self.base_endpoint + f"?query=code:{code}"
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknow error"))
+        return output.json['plans'][0]
