@@ -31,6 +31,7 @@ class Discount:
             self.quantity == self.value
 
         repr = {
+            "product_item_id": self.product_item_id,
             "discount_type": self.discount_type.value,
             "percentage": self.percentage,
             "amount": self.amount,
