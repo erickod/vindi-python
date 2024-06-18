@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any
-from uuid import UUID
 from vindi.errors import ApiError
 from vindi.handlers.base_handler import BaseVindiHandler
+from uuid import UUID
+from typing import Literal
 
 
 class DiscountType(Enum):
@@ -14,6 +15,7 @@ class DiscountType(Enum):
 
 @dataclass
 class Discount:
+    product_item_id: int | None
     discount_type: DiscountType
     percentage: float | None = None
     value: float | int | None = None
@@ -42,7 +44,7 @@ class Discount:
 
 @dataclass
 class ProductItem:
-    product_id: UUID
+    product_id: str
     price: float | None = None
     cycles: int | None = None
     quantity: int = 1
@@ -68,8 +70,8 @@ class ProductItem:
 
 @dataclass
 class Subscription:
-    customer_id: UUID
-    plan_id: UUID
+    customer_id: str
+    plan_id: str
     code: str
     payment_method_code: str
     product_items: list[ProductItem]
@@ -95,9 +97,6 @@ class Subscription:
                 p.asdict for p in self.product_items
             ],
         }
-        print('####################'*4000)
-        print('DENTRO DA LIB')
-        print(repr)
         return {k: v for k, v in repr.items() if v is not None}
 
 
@@ -130,6 +129,15 @@ class SubscriptionHandler(BaseVindiHandler):
             method="put",
             url=self._config.get_environ_url() + self.base_endpoint + id,
             json=subscription.asdict,
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknown error"))
+        return output
+    
+    async def get_subscription_by_id(self, id: str):
+        output = await self.request(
+            method="get",
+            url=self._config.get_environ_url() + self.base_endpoint + id,
         )
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknown error"))
