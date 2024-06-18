@@ -60,3 +60,23 @@ class DiscountHandler(BaseVindiHandler):
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknown error"))
         return output
+    
+    async def get_discount_by_id(self, id: str):
+        
+        output = await self.request(
+            method="get",
+            url=self._config.get_environ_url() + self.base_endpoint + id,
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknown error"))
+        return output
+    
+    async def delete_discount_by_id(self, id: str):
+        
+        output = await self.request(
+            method="delete",
+            url=self._config.get_environ_url() + self.base_endpoint + id,
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknown error"))
+        return output
