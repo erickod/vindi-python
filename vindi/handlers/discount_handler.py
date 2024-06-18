@@ -3,8 +3,6 @@ from enum import Enum
 from typing import Any
 from vindi.errors import ApiError
 from vindi.handlers.base_handler import BaseVindiHandler
-from uuid import UUID
-from typing import Literal
 
 
 class DiscountType(Enum):
@@ -49,9 +47,6 @@ class DiscountHandler(BaseVindiHandler):
         return "/v1/discounts/"
 
     async def apply_discount(self, discount: Discount):
-        
-        assert discount.percentage
-        
         output = await self.request(
             method="post",
             url=self._config.get_environ_url() + self.base_endpoint,
@@ -62,7 +57,6 @@ class DiscountHandler(BaseVindiHandler):
         return output
     
     async def get_discount_by_id(self, id: str):
-        
         output = await self.request(
             method="get",
             url=self._config.get_environ_url() + self.base_endpoint + id,
@@ -72,7 +66,6 @@ class DiscountHandler(BaseVindiHandler):
         return output
     
     async def delete_discount_by_id(self, id: str):
-        
         output = await self.request(
             method="delete",
             url=self._config.get_environ_url() + self.base_endpoint + id,
