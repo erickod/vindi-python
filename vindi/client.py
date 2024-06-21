@@ -1,6 +1,7 @@
 from typing import Literal
 
 from vindi.handlers.bill_handler import BillHandler
+from vindi.handlers.charge_handler import ChargeHandler
 from vindi.handlers.customer_handler import CustomerHandler
 from vindi.handlers.plan_handler import PlanHandler
 from vindi.handlers.product_handler import ProductHandler
@@ -52,3 +53,7 @@ class Client:
     @property
     def discount(self) -> DiscountHandler:
         return DiscountHandler(http_client=self._http_client, config=self._config)
+
+    @property
+    def charge(self) -> ChargeHandler:
+        return ChargeHandler(http_client=self._http_client, config=self._config)
