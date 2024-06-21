@@ -13,6 +13,7 @@ class DiscountType(Enum):
 
 @dataclass
 class Discount:
+    product_item_id: int | None
     discount_type: DiscountType
     percentage: float | None = None
     value: float | int | None = None
@@ -94,9 +95,6 @@ class Subscription:
                 p.asdict for p in self.product_items
             ],
         }
-        print('####################'*4000)
-        print('DENTRO DA LIB')
-        print(repr)
         return {k: v for k, v in repr.items() if v is not None}
 
 
@@ -129,6 +127,15 @@ class SubscriptionHandler(BaseVindiHandler):
             method="put",
             url=self._config.get_environ_url() + self.base_endpoint + id,
             json=subscription.asdict,
+        )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknown error"))
+        return output
+    
+    async def get_subscription_by_id(self, id: str):
+        output = await self.request(
+            method="get",
+            url=self._config.get_environ_url() + self.base_endpoint + id,
         )
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknown error"))
