@@ -13,7 +13,6 @@ class DiscountType(Enum):
 
 @dataclass
 class Discount:
-    product_item_id: int | None
     discount_type: DiscountType
     percentage: float | None = None
     value: float | int | None = None
