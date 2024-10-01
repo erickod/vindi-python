@@ -1,5 +1,6 @@
+from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 from vindi.errors import ApiError, ParamError
 from vindi.handlers.base_handler import BaseVindiHandler
 
@@ -155,6 +156,50 @@ class BillHandler(BaseVindiHandler):
             + str(id)
             + endpoint,
         )
+        if "errors" in output.json:
+            raise ApiError(output.json.get("errors", "unknown error"))
+        return output
+
+    async def get_bills(
+        self,
+        *,
+        id=None,
+        code=None,
+        installments=None,
+        period_id=None,
+        subscription_id=None,
+        customer_id=None,
+        amount=None,
+        status=None,
+        payment_method_id=None,
+        seen_at=None,
+        due_at=None,
+        billing_at=None,
+        created_at=None,
+        updated_at=None,
+        page: int = 1,
+        per_page: int = 25,
+        sort_order: Literal["asc", "desc"] = "desc",
+        sort_by: str | None = "created_at",
+    ):
+        filters = deepcopy(locals())
+        filters.pop("self")
+        default_filters = ("page", "per_page", "sort_order", "sort_by")
+        default_query_string = f"?page={page}&per_page={per_page}&sort_order={sort_order}"  # &sort_by={sort_by}"
+        aditional_filter_query_string = ""
+        for k, v in filters.items():
+            if not v or k in default_filters:
+                continue
+            aditional_filter_query_string += f"{k}:{v}&"
+        if aditional_filter_query_string:
+            default_query_string += f"&query={aditional_filter_query_string}"
+        url = (
+            self._config.get_environ_url()
+            + self.base_endpoint
+            + f"{default_query_string[0:-1]}"
+        )
+        print(url)
+        output = await self.request(method="get", url=url)
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknown error"))
         return output
