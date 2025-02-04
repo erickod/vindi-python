@@ -24,6 +24,4 @@ class Config:
         return "https://sandbox-app.vindi.com.br/api"
 
     def get_api_key(self) -> str:
-        if self.environment == "prod":
-            return f"{self.api_key}"
-        return f"Basic {self.api_key}"
+        return self.api_key
