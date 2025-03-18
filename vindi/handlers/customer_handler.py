@@ -1,4 +1,5 @@
 from typing import Any, Literal
+
 from vindi.address import Address
 from vindi.customer import Customer
 from vindi.errors import ApiError
@@ -69,6 +70,7 @@ class CustomerHandler(BaseVindiHandler):
                 documentation=c.get("registry_code"),
                 code=c.get("code"),
                 address=Address(
+                    state=address.get("state"),
                     street=address.get("street"),
                     neighborhood=address.get("neighborhood"),
                     city=address.get("city"),
@@ -81,16 +83,18 @@ class CustomerHandler(BaseVindiHandler):
             customers.append(customer)
         return customers
 
-    async def create_payment_profile(self, gateway_token: str, customer_id: str, payment_method_code: str) -> Any:
-        base_endpoint = '/v1/payment_profiles'
+    async def create_payment_profile(
+        self, gateway_token: str, customer_id: str, payment_method_code: str
+    ) -> Any:
+        base_endpoint = "/v1/payment_profiles"
         output = await self.request(
             method="post",
             url=self._config.get_environ_url() + base_endpoint,
             json={
                 "gateway_token": gateway_token,
                 "customer_id": customer_id,
-                "payment_method_code": payment_method_code
-            }
+                "payment_method_code": payment_method_code,
+            },
         )
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknown error"))
