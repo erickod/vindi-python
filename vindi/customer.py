@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Literal
 from uuid import uuid1
+
 from vindi.address import Address
 
 
@@ -11,6 +12,7 @@ class Customer:
     documentation: str
     address: Address
     code: Any = uuid1()
+    id: str = ""
 
     def __post_init__(self) -> None:
         self.__phones: list[dict[str, str]] = []

@@ -69,6 +69,7 @@ class CustomerHandler(BaseVindiHandler):
                 email=c.get("email"),
                 documentation=c.get("registry_code"),
                 code=c.get("code"),
+                id=c.get("id", ""),
                 address=Address(
                     state=address.get("state"),
                     street=address.get("street"),
