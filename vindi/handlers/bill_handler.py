@@ -118,6 +118,17 @@ class BillHandler(BaseVindiHandler):
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknown error"))
         return output
+    
+    async def get_first_paid_charge_id_from_bill(self, bill_id: str) -> str | None:
+        response = await self.get_bill(bill_id)
+        bill = response.json.get("bill", {})
+
+        charges = bill.get("charges", [])
+        for charge in charges:
+            if charge.get("status") == "paid":
+                return str(charge["id"])
+
+        return None
 
     async def approve_bill_in_review(self, id: str):
         # TODO: Check with Vindi how can i simulate this review stats so we can test this

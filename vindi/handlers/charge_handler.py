@@ -19,3 +19,17 @@ class ChargeHandler(BaseVindiHandler):
         if "errors" in output.json:
             raise ApiError(output.json.get("errors", "unknown error"))
         return output
+    
+
+    async def refund_charge(self, id: str, amount: float | None = None):
+        payload = {}
+        if amount:
+            payload["amount"] = f"{amount:.2f}"
+
+        return await self.request(
+            method="post",
+            url=self._config.get_environ_url() + self.base_endpoint + f"{id}/refund",
+            json=payload
+        )
+    
+    
